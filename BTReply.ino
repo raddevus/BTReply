@@ -57,6 +57,7 @@ void loop()
         SW_Serial.print("Retrieving file...\n");
         File dataFile = SD.open("test.txt", FILE_READ);
         if (dataFile) { 
+          int counter = 1;
         while (dataFile.available()) { //execute while file is available
           char letter = dataFile.read(); //read next character from file
           // I strip off the 13 found on each line of the 
@@ -64,12 +65,21 @@ void loop()
           // in the SW_Serial.prinln(output) so that the SoBtEx Android
           // app will recognize the end of transmission. It's odd
           // but it works.
+          
           if (letter != 13){
-            output.concat(letter);
+            if (counter % 20 == 0){
+              SW_Serial.print(output);
+              output = "";
+              counter = 1;
+            }
+            else{
+              output.concat(letter);
+              counter++;
+            }
           }
         }
         SW_Serial.println(output); //display all
-        //SW_Serial.println("");
+        
         dataFile.close(); //close file
         }
       }
